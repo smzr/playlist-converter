@@ -28,7 +28,7 @@ class TrackList extends Component {
                         inputURI:'',
                         list: [],
                         progress: '0',
-                        progresscontainer: '0',
+                        progresswidth: '0',
                         playlistId: 'PLaq91DRBmQjAYAln54eYN6DZ5kwRazDt_',
                         history: []
                 }
@@ -61,7 +61,7 @@ class TrackList extends Component {
                                 listBuffer.push(emt)
                         }
                 }
-                this.setState({list: listBuffer, progresscontainer: 100})
+                this.setState({list: listBuffer, progresswidth: 100})
         }
         addItem(text) {
                 const element = {
@@ -90,7 +90,7 @@ class TrackList extends Component {
                         listBuffer.push(emt)
                 }
                 this.setState({list: listBuffer, userInput: ''})
-                this.setState({progresscontainer: 100})
+                this.setState({progresswidth: 100})
         }
         removeItem(key) {
                 var filteredList = this.state.list.filter(function(item){
@@ -98,7 +98,7 @@ class TrackList extends Component {
                 })
                 this.setState({list: filteredList})
                 if (filteredList.length === 0) {
-                        this.setState({progresscontainer: 0})
+                        this.setState({progresswidth: 0})
                 }
         }
         changeIcon(key, icon) {
@@ -190,7 +190,7 @@ class TrackList extends Component {
                                         if (i < listBuffer.length) {
                                                 insertLoop()
                                         } else {
-                                                thisBuffer.setState({progresscontainer: 0})
+                                                thisBuffer.setState({progresswidth: 0})
                                         }
                                 })
                         })
@@ -198,7 +198,7 @@ class TrackList extends Component {
                 insertLoop()
         }
         clearList() {
-                this.setState({list: [], progresscontainer: 0})
+                this.setState({list: [], progresswidth: 0})
         }
         shuffle() {
                 let listBuffer = this.state.list;
@@ -214,6 +214,15 @@ class TrackList extends Component {
 
 
         render() {
+                let shuffle = <button onClick={()=>this.shuffle()} className="btn-1 tool" dangerouslySetInnerHTML={{__html: feather.icons.shuffle.toSvg() + '<span class="btn-text hovertext">Shuffle</span>'}}></button>;
+                let clearList = <button onClick={()=>this.clearList()} className="btn-1 tool" dangerouslySetInnerHTML={{__html: feather.icons.trash.toSvg() + '<span class="btn-text hovertext">Clear List</span>'}}></button>;
+                let transfer = <button onClick={()=>this.insertPlaylistItems()} className="btn-1 tool" dangerouslySetInnerHTML={{__html: feather.icons.upload.toSvg() + '<span class="btn-text hovertext">Transfer Songs</span>'}}></button>;
+                let buttons = [];
+                if (this.state.list.length === 0) {
+                        buttons = []
+                } else {
+                        buttons = [shuffle, clearList, transfer]
+                }
                 return (
                         <div className="list-main">
                                 <div className="searchbar">
@@ -240,13 +249,13 @@ class TrackList extends Component {
                                                 )}
                                         </FlipMove>
                                 </ul>
-                                <div className="toolbar">
-                                        <button onClick={()=>this.shuffle()} className="btn-1 tool" dangerouslySetInnerHTML={{__html: feather.icons.shuffle.toSvg() + '<span class="btn-text hovertext">Shuffle</span>'}}></button>
-                                        <button onClick={()=>this.clearList()} className="btn-1 tool" dangerouslySetInnerHTML={{__html: feather.icons.trash.toSvg() + '<span class="btn-text hovertext">Clear List</span>'}}></button>
-                                        <button onClick={()=>this.insertPlaylistItems()} className="btn-1 tool" dangerouslySetInnerHTML={{__html: feather.icons.upload.toSvg() + '<span class="btn-text hovertext">Transfer Songs</span>'}}></button>
-                                </div>
+                                <FlipMove className="toolbar" duration={250} easing="ease-out">
+                                        {buttons.map(btn =>
+                                                <div>{btn}</div>
+                                        )}
+                                </FlipMove>
                                 <br/>
-                                <div className="progress-bar-container" style={{width: this.state.progresscontainer+'%'}}>
+                                <div className="progress-bar-container" style={{width: this.state.progresswidth+'%'}}>
                                         <div className="progress-bar" style={{width : this.state.progress + '%'}}></div>
                                 </div>
                                 <br/>
