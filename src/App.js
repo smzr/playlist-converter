@@ -3,14 +3,22 @@ import './App.css';
 import './bootstrap-grid.css';
 import queryString from 'query-string';
 import FlipMove from 'react-flip-move';
-const feather = require('feather-icons')
+import { faRandom, faTrash, faExchangeAlt, faSyncAlt, faCheck, faListUl } from "@fortawesome/free-solid-svg-icons";
+import { faYoutube } from "@fortawesome/free-brands-svg-icons"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 class App extends Component {
         render() {
                 return (
                         <div className="App">
-                                <h1>Playlist Converter</h1>
-                                <h2>Spotify to YouTube</h2>
+                                <header>
+                                        <div id="header-content">
+                                                <a id="logo" href="#/">
+                                                        <FontAwesomeIcon icon={faListUl} size="lg" />
+                                                        <h1>Playlist Converter</h1>
+                                                </a>
+                                        </div>
+                                </header>
                                 <button className="spotify-btn" onClick={() => window.location = 'http://localhost:8888/spotify/authenticate'}>Load Spotify data</button>
                                 <br/>
                                 <button className="youtube-btn" onClick={() => window.location = 'http://localhost:8888/youtube/authenticate'}>Load YouTube data</button>
@@ -29,7 +37,7 @@ class TrackList extends Component {
                         list: [],
                         progress: '0',
                         progresswidth: '0',
-                        playlistId: 'PLaq91DRBmQjAYAln54eYN6DZ5kwRazDt_',
+                        playlistId: 'PLaq91DRBmQjAaSqcKlg-1Fgz9DWIUPZ8V',
                         history: []
                 }
         }
@@ -70,7 +78,8 @@ class TrackList extends Component {
                         artist: '',
                         searchTerm: '',
                         img: '',
-                        icon: ''
+                        icon: '',
+                        icondisplay: '',
                 }
                 let listBuffer = this.state.list;
                 let emt = Object.create(element)
@@ -79,6 +88,8 @@ class TrackList extends Component {
                 emt.artist = text.split('-')[1]
                 emt.searchTerm = text
                 emt.img = 'https://i.imgur.com/4I6yRjO.png'
+                emt.icon = faSyncAlt
+                emt.icondisplay = 'none'
                 let dupe = false;
                 for (let j = 0; j < listBuffer.length; j++) {
                         if (listBuffer[j].key === emt.key) {
@@ -105,7 +116,7 @@ class TrackList extends Component {
                 let listBuffer = this.state.list
                 for (let i = 0; i < listBuffer.length; i++) {
                         if (listBuffer[i].key === key) {
-                                listBuffer[i]['icon'] = feather.icons[icon].toSvg()
+                                listBuffer[i]['icon'] = ''
                         }
                 }
                 this.setState({list: listBuffer})
@@ -158,13 +169,16 @@ class TrackList extends Component {
                 let progressIncrement = 100 * (1 / listBuffer.length)
                 let progressBuffer = 0
                 function insertLoop() {
-                        thisBuffer.changeIcon(listBuffer[i].key, 'refresh-cw')
+                        listBuffer[i].icon = faSyncAlt
+                        listBuffer[i].icondisplay = 'inherit'
+                        thisBuffer.forceUpdate()
                         fetch('https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=1&type=video&q='+listBuffer[i].searchTerm, {
                                 headers: {
                                         'Content-Type': 'application/json',
                                         'Authorization': 'Bearer ' + yt
                                 }
                         }).then(response => response.json()).then(data => {
+                                console.log(data)
                                 // insert video(s) into youtube playlist
                                 fetch('https://www.googleapis.com/youtube/v3/playlistItems?part=snippet', {
                                         method: 'POST',
@@ -183,7 +197,9 @@ class TrackList extends Component {
                                                 }
                                         })
                                 }).then(response => response.json()).then(playlistdata =>{
-                                        thisBuffer.changeIcon(listBuffer[i].key, 'check')
+                                        console.log(playlistdata)
+                                        listBuffer[i].icon = faCheck
+                                        listBuffer[i].icondisplay = 'inherit'
                                         progressBuffer += progressIncrement
                                         thisBuffer.setState({progress: progressBuffer})
                                         i++
@@ -214,9 +230,9 @@ class TrackList extends Component {
 
 
         render() {
-                let shuffle = <button onClick={()=>this.shuffle()} className="btn-1 tool" dangerouslySetInnerHTML={{__html: feather.icons.shuffle.toSvg() + '<span class="btn-text hovertext">Shuffle</span>'}}></button>;
-                let clearList = <button onClick={()=>this.clearList()} className="btn-1 tool" dangerouslySetInnerHTML={{__html: feather.icons.trash.toSvg() + '<span class="btn-text hovertext">Clear List</span>'}}></button>;
-                let transfer = <button onClick={()=>this.insertPlaylistItems()} className="btn-1 tool" dangerouslySetInnerHTML={{__html: feather.icons.upload.toSvg() + '<span class="btn-text hovertext">Transfer Songs</span>'}}></button>;
+                let shuffle = <button onClick={()=>this.shuffle()} className="btn-1 tool"><FontAwesomeIcon icon={faRandom} size="lg" /><span className="btn-text hovertext">Shuffle</span></button>;
+                let clearList = <button onClick={()=>this.clearList()} className="btn-1 tool"><FontAwesomeIcon icon={faTrash} size="lg"/><span className="btn-text hovertext">Clear List</span></button>;
+                let transfer = <button onClick={()=>this.insertPlaylistItems()} className="btn-1 tool"><FontAwesomeIcon icon={faExchangeAlt} size="lg"/><span className="btn-text hovertext">Transfer Songs</span></button>;
                 let buttons = [];
                 if (this.state.list.length === 0) {
                         buttons = []
@@ -244,7 +260,7 @@ class TrackList extends Component {
                                                         <li onClick={()=>this.removeItem(item.key)} key={item.key}>
                                                                 <div className="album col-2"><img alt={item.name + ' - ' + item.artist} src={item.img}/></div>
                                                                 <p className="metatext col-8"><b>{item.name}</b><br/>{item.artist}</p>
-                                                                <div className="col-2" dangerouslySetInnerHTML={{__html: item.icon}}></div>
+                                                                <div className="col-2"><FontAwesomeIcon icon={ item.icon } size="lg" style={{display: item.icondisplay}}/></div>
                                                         </li>
                                                 )}
                                         </FlipMove>
@@ -262,7 +278,7 @@ class TrackList extends Component {
                                 <button onClick={()=>this.createPlaylist()} className="btn-1" style={{display : 'none'}}>Create Youtube Playlist</button>
                                 <p style={{display : 'none'}}>Current playlist: {this.state.playlistId}</p>
                                 <div>
-                                        <button onClick={() => window.open('https://www.youtube.com/playlist?list='+this.state.playlistId)} className="btn-1 btn-yt" dangerouslySetInnerHTML={{__html: feather.icons['external-link'].toSvg() + '<span class="btn-text hovertext">Open YouTube Playlist</span>'}}></button>
+                                        <button onClick={() => window.open('https://www.youtube.com/playlist?list='+this.state.playlistId)} className="btn-1 btn-yt"><FontAwesomeIcon icon={faYoutube} size="lg" /><span className="btn-text hovertext">Open YouTube Playlist</span></button>
                                 </div>
                         </div>
                 )
