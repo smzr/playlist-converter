@@ -259,17 +259,19 @@ class TrackList extends Component {
                                                 {this.state.list.map(item =>
                                                         <li onClick={()=>this.removeItem(item.key)} key={item.key}>
                                                                 <div className="album col-2"><img alt={item.name + ' - ' + item.artist} src={item.img}/></div>
-                                                                <p className="metatext col-8"><b>{item.name}</b><br/>{item.artist}</p>
+                                                                <div className="metatext col-8"><p className="trackname">{item.name}</p><p className="artist">{item.artist}</p></div>
                                                                 <div className="col-2"><FontAwesomeIcon icon={ item.icon } size="lg" style={{display: item.icondisplay}}/></div>
                                                         </li>
                                                 )}
                                         </FlipMove>
                                 </ul>
-                                <FlipMove className="toolbar" duration={250} easing="ease-out">
-                                        {buttons.map(btn =>
-                                                <div>{btn}</div>
-                                        )}
-                                </FlipMove>
+                                <div className="toolbar">
+                                        <FlipMove className="toolbar-buttons" duration={250} easing="ease-out">
+                                                {buttons.map(btn =>
+                                                        <div>{btn}</div>
+                                                )}
+                                        </FlipMove>
+                                </div>
                                 <br/>
                                 <div className="progress-bar-container" style={{width: this.state.progresswidth+'%'}}>
                                         <div className="progress-bar" style={{width : this.state.progress + '%'}}></div>
