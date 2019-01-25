@@ -3,7 +3,7 @@ import './App.css';
 import './bootstrap-grid.css';
 import queryString from 'query-string';
 import FlipMove from 'react-flip-move';
-import { faRandom, faTrash, faExchangeAlt, faSyncAlt, faCheck, faListUl, faEdit, faTimes } from "@fortawesome/free-solid-svg-icons";
+import { faRandom, faTrash, faExchangeAlt, faSyncAlt, faCheck, faTasks, faEdit, faTimes } from "@fortawesome/free-solid-svg-icons";
 import { faYoutube } from "@fortawesome/free-brands-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
@@ -48,14 +48,14 @@ class App extends Component {
                 return (
                         <div className="App">
                                 <header>
-                                        <div id="header-content" className="row">
-                                                <a id="logo" className="col-4" href="#/">
-                                                        <FontAwesomeIcon icon={faListUl} size="lg" />
+                                        <div id="header-content">
+                                                <a id="logo" href="#/">
+                                                        <FontAwesomeIcon icon={faTasks} size="lg" />
                                                         <h1>Playlist Converter</h1>
                                                 </a>
-                                                <div className="auth-btns col-4 offset-4">
-                                                        <button className="btn-1 btn-spotauth" onClick={() => window.location = 'https://playlist-converter-backend.herokuapp.com/spotify/authenticate/'} ><span className="btn-text">Auth Spotify</span></button>
-                                                        <button className="btn-1 btn-ytauth" onClick={() => window.location = 'https://playlist-converter-backend.herokuapp.com/youtube/authenticate/'} ><span className="btn-text">Auth YouTube</span></button>
+                                                <div className="auth-btns">
+                                                        <button className="btn-1 btn-spotauth" onClick={() => window.location = 'https://playlist-converter-backend.herokuapp.com/spotify/authenticate/'} ><span>Auth Spotify</span></button>
+                                                        <button className="btn-1 btn-ytauth" onClick={() => window.location = 'https://playlist-converter-backend.herokuapp.com/youtube/authenticate/'} ><span>Auth YouTube</span></button>
                                                 </div>
                                         </div>
                                         <div className="progress-bar-container">
@@ -64,10 +64,10 @@ class App extends Component {
                                 </header>
                                 <TrackList playlistId={this.state.playlistId} onPlaylistIdChange={this.handlePlaylistIdChange} onProgressChange={this.handleProgressChange}/>
                                 <br/>
-                                <div className="destPL"><p className="destPL-text">{this.state.playlistId}</p><button onClick={()=>this.togglePopup()} className="btn-1"><FontAwesomeIcon icon={faEdit} size="lg" /><span className="btn-text hovertext">New Playlist</span></button></div>
+                                <div className="destPL"><p className="destPL-text">{this.state.playlistId}</p><button onClick={()=>this.togglePopup()} className="btn-1"><FontAwesomeIcon icon={faEdit} size="lg" /><span className="btn-text">New Playlist</span></button></div>
                                 <br/>
                                 <div>
-                                        <button onClick={() => window.open('https://www.youtube.com/playlist?list='+this.state.playlistId)} className="btn-1 btn-yt"><FontAwesomeIcon icon={faYoutube} size="lg" /><span className="btn-text hovertext">Open YouTube Playlist</span></button>
+                                        <button onClick={() => window.open('https://www.youtube.com/playlist?list='+this.state.playlistId)} className="btn-1 btn-yt"><FontAwesomeIcon icon={faYoutube} size="lg" /><span className="btn-text">Open YouTube Playlist</span></button>
                                 </div>
                                 {this.state.showPopup ? <Popup text='Close Me' closePopup={this.togglePopup} onPlaylistIdChange={this.handlePlaylistIdChange}/> : null}
                         </div>
@@ -253,9 +253,9 @@ class TrackList extends Component {
 
 
         render() {
-                let shuffle = <button onClick={()=>this.shuffle()} className="btn-1 tool"><FontAwesomeIcon icon={faRandom} size="lg" /><span className="btn-text hovertext">Shuffle</span></button>;
-                let clearList = <button onClick={()=>this.clearList()} className="btn-1 tool"><FontAwesomeIcon icon={faTrash} size="lg"/><span className="btn-text hovertext">Clear List</span></button>;
-                let transfer = <button onClick={()=>this.insertPlaylistItems()} className="btn-1 tool"><FontAwesomeIcon icon={faExchangeAlt} size="lg"/><span className="btn-text hovertext">Transfer Songs</span></button>;
+                let shuffle = <button onClick={()=>this.shuffle()} className="btn-1 tool"><FontAwesomeIcon icon={faRandom} size="lg" /><span className="btn-text">Shuffle</span></button>;
+                let clearList = <button onClick={()=>this.clearList()} className="btn-1 tool"><FontAwesomeIcon icon={faTrash} size="lg"/><span className="btn-text">Clear List</span></button>;
+                let transfer = <button onClick={()=>this.insertPlaylistItems()} className="btn-1 tool"><FontAwesomeIcon icon={faExchangeAlt} size="lg"/><span className="btn-text">Transfer Songs</span></button>;
                 let buttons = [];
                 if (this.state.list.length === 0) {
                         buttons = []
@@ -275,15 +275,15 @@ class TrackList extends Component {
                                 <ul className="row list-content">
                                         <FlipMove className="flipmove" duration={250} easing="ease-out">
                                                 <li key="legend" className="legend">
-                                                        <p className="col-2">Album</p>
-                                                        <p className="col-8">Title/Artist</p>
-                                                        <p className="col-2">{this.state.list.length} songs</p>
+                                                        <p className="col-sm-2 col-xs-3">Album</p>
+                                                        <p className="col-sm-8 col-xs-6">Title/Artist</p>
+                                                        <p className="col-sm-2 col-xs-3">{this.state.list.length} songs</p>
                                                 </li>
                                                 {this.state.list.map(item =>
                                                         <li onClick={()=>this.removeItem(item.key)} key={item.key}>
-                                                                <div className="album col-2"><img alt={item.name + ' - ' + item.artist} src={item.img}/></div>
-                                                                <div className="metatext col-8"><p className="trackname">{item.name}</p><p className="artist">{item.artist}</p></div>
-                                                                <div className="col-2"><FontAwesomeIcon icon={ item.icon } size="lg" style={{display: item.icondisplay}}/></div>
+                                                                <div className="album col-sm-2 col-xs-3"><img alt={item.name + ' - ' + item.artist} src={item.img}/></div>
+                                                                <div className="metatext col-sm-8 col-xs-6"><p className="trackname">{item.name}</p><p className="artist">{item.artist}</p></div>
+                                                                <div className="col-sm-2 col-xs-3"><FontAwesomeIcon icon={ item.icon } size="lg" style={{display: item.icondisplay}}/></div>
                                                         </li>
                                                 )}
                                         </FlipMove>
