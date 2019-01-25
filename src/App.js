@@ -54,8 +54,8 @@ class App extends Component {
                                                         <h1>Playlist Converter</h1>
                                                 </a>
                                                 <div className="auth-btns col-4 offset-4">
-                                                        <button className="btn-1 btn-spotauth" onClick={() => window.location = 'http://localhost:8888/spotify/authenticate/?spotify_access_token=' + this.state.spotify_access_token + '&youtube_access_token=' + this.state.youtube_access_token}><span className="btn-text">Auth Spotify</span></button>
-                                                        <button className="btn-1 btn-ytauth" onClick={() => window.location = 'http://localhost:8888/youtube/authenticate/?spotify_access_token=' + this.state.spotify_access_token + '&youtube_access_token=' + this.state.youtube_access_token}><span className="btn-text">Auth YouTube</span></button>
+                                                        <button className="btn-1 btn-spotauth" onClick={() => window.location = 'https://playlist-converter-backend.herokuapp.com/spotify/authenticate/'><span className="btn-text">Auth Spotify</span></button>
+                                                        <button className="btn-1 btn-ytauth" onClick={() => window.location = 'https://playlist-converter-backend.herokuapp.com/youtube/authenticate/'><span className="btn-text">Auth YouTube</span></button>
                                                 </div>
                                         </div>
                                         <div className="progress-bar-container">
