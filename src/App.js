@@ -3,7 +3,7 @@ import './App.css';
 import './bootstrap-grid.css';
 import queryString from 'query-string';
 import FlipMove from 'react-flip-move';
-import { faRandom, faTrash, faExchangeAlt, faSyncAlt, faCheck, faTasks, faEdit, faTimes } from "@fortawesome/free-solid-svg-icons";
+import { faRandom, faTrash, faExchangeAlt, faSyncAlt, faCheck, faTasks, faEdit, faTimes, faExclamationTriangle } from "@fortawesome/free-solid-svg-icons";
 import { faYoutube } from "@fortawesome/free-brands-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
@@ -305,7 +305,12 @@ class Popup extends Component {
                 super(props)
                 this.state = {
                         title: '',
-                        description: ''
+                        description: '',
+                        error: {
+                                show: false,
+                                code: '',
+                                msg: ''
+                        }
                 }
 
                 this.handleSubmit = this.handleSubmit.bind(this)
@@ -335,19 +340,40 @@ class Popup extends Component {
                         })
                 }).then(response => response.json()).then(data => {
                         console.log(data)
-                        this.props.onPlaylistIdChange(data.id);
+                        if (data.error === undefined) {
+                                this.props.onPlaylistIdChange(data.id);
+                                this.props.closePopup();
+                        }
+                        else {
+                                this.setState({error : {show: true, code: data.error.code, msg: data.error.message}})
+                        }
                 })
+        }
+
+        error() {
+
         }
 
         render() {
                 return (
                         <div className='popup'>
                                 <div className='popup_inner'>
-                                        <div className="row popup_header">
-                                                <h3 className="col-8">Create new YouTube Playlist</h3>
-                                                <button onClick={this.props.closePopup} className="close col-1 offset-3"><FontAwesomeIcon icon={faTimes} size="lg" /></button>
+                                        <div className="popup_header">
+                                                <h3>Create new YouTube Playlist</h3>
+                                                <button onClick={this.props.closePopup} className="close"><FontAwesomeIcon icon={faTimes} size="lg" /></button>
                                         </div>
                                         <div className="popup_body">
+                                                {this.state.error.show ?
+                                                        <div className="error">
+                                                                <div className="error-header">
+                                                                        <h4><FontAwesomeIcon icon={faExclamationTriangle} />Error!</h4>
+                                                                        <button onClick={() => this.setState({error : {show: false}})} id="error-close" className="close"><FontAwesomeIcon icon={faTimes} /></button>
+                                                                </div>
+                                                                <div className="error-body">
+                                                                        <b>{this.state.error.code}</b> {this.state.error.msg}
+                                                                </div>
+                                                        </div>
+                                                : null}
                                                 <form onSubmit={this.handleSubmit}>
                                                         <label>
                                                                 Title:<br/>

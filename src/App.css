@@ -263,7 +263,6 @@ h5 {
 }
 .popup_inner {
         width: 500px;
-        height: 600px;
         background: #292a2f;
         border-radius: 15px;
         overflow: hidden;
@@ -278,13 +277,18 @@ h5 {
         background-color: #18181c;
         color: white;
         padding: 15px;
+        border-bottom: 3px solid #da3737;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
 }
 .popup_header h3 {
         margin: 0;
-        line-height: 40px;
+        font-size: 12pt;
 }
 .close {
         height: 40px;
+        width: 40px;
         border-radius: 5px;
         border: none;
         background: none;
@@ -297,11 +301,11 @@ h5 {
 }
 .close:hover {
         cursor: pointer;
-        background-color: rgba(255, 100, 100, 0.3);
+        background-color: rgba(218, 55, 55, 0.3);
         transition: ease 0.3s;
 }
 .close:active {
-        background-color: rgba(255, 100, 100, 0.6);
+        background-color: #da3737;
         transition: ease 0.3s;
 }
 .popup_body {
@@ -359,6 +363,40 @@ h5 {
         -webkit-box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.3);
         -moz-box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.3);
         box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.3);
+}
+.error {
+        background-color: rgb(218, 137, 137);
+        color: #a22828;
+        border-radius: 5px;
+        overflow: hidden;
+        margin: 10px;
+}
+.error h4 svg {
+        margin-right: 10px;
+}
+.error-header {
+        background-color: rgb(218, 55, 55);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 5px;
+}
+#error-close {
+        height: 20px;
+        width: 20px;
+}
+#error-close:hover {
+        cursor: pointer;
+        background-color: none;
+        transition: none;
+}
+#error-close:active {
+        background-color: none;
+        transition: ease none;
+}
+.error-body {
+        padding: 10px;
+        font-weight: normal;
 }
 
 
@@ -519,6 +557,9 @@ h5 {
         }
         .btn-1:hover svg {
                 margin-top: -30px;
+        }
+        .popup_header h3 {
+                font-size: 14pt;
         }
 }
 
