@@ -9,6 +9,7 @@
     "@fortawesome/react-fontawesome": "^0.1.4",
     "feather-icons": "^4.10.0",
     "googleapis": "^33.0.0",
+    "query-string": "^6.2.0",
     "react": "^16.4.2",
     "react-dom": "^16.4.2",
     "react-flip-move": "^3.0.3",
