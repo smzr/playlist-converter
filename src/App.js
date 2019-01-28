@@ -3,7 +3,7 @@ import './App.css';
 import './bootstrap-grid.css';
 import queryString from 'query-string';
 import FlipMove from 'react-flip-move';
-import { faRandom, faTrash, faExchangeAlt, faSyncAlt, faCheck, faTasks, faEdit, faTimes, faExclamationTriangle } from "@fortawesome/free-solid-svg-icons";
+import { faRandom, faTrash, faExchangeAlt, faSyncAlt, faCheck, faTasks, faEdit, faTimes, faExclamationTriangle, faCaretDown  } from "@fortawesome/free-solid-svg-icons";
 import { faYoutube } from "@fortawesome/free-brands-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
@@ -306,6 +306,7 @@ class Popup extends Component {
                 this.state = {
                         title: '',
                         description: '',
+                        privacy: 'private',
                         error: {
                                 show: false,
                                 code: '',
@@ -318,24 +319,29 @@ class Popup extends Component {
 
         handleSubmit(e) {
                 e.preventDefault();
-                let title = e.target.title.value;
-                let description = e.target.description.value;
-                this.createPlaylist(title, description);
+                let title = this.state.title;
+                let description = this.state.description;
+                let privacy = this.state.privacy;
+                this.createPlaylist(title, description, privacy);
         }
 
-        createPlaylist(title, description) {
+        createPlaylist(title, description, privacy) {
                 let yt = localStorage.youtube_access_token;
-                fetch('https://www.googleapis.com/youtube/v3/playlists?part=snippet', {
+                fetch('https://www.googleapis.com/youtube/v3/playlists?part=snippet,status', {
                         method: 'POST',
                         headers: {
                                 'Content-type': 'application/json',
-                                'Authorization': 'Bearer ' + yt,
+                                'Authorization': 'Bearer ' + yt
                         },
                         body: JSON.stringify({
                                 'snippet':
                                 {
                                         'title':title,
                                         'description':description
+                                },
+                                'status':
+                                {
+                                        'privacyStatus':privacy
                                 }
                         })
                 }).then(response => response.json()).then(data => {
@@ -376,15 +382,26 @@ class Popup extends Component {
                                                 : null}
                                                 <form onSubmit={this.handleSubmit}>
                                                         <label>
-                                                                Title:<br/>
-                                                        <input name="title" type="text" required value={this.state.title} onChange={e => this.setState({title: e.target.value})} />
+                                                                <span>Title:</span><br/>
+                                                        <textarea name="title" required maxLength="150" value={this.state.title} onChange={e => this.setState({title: e.target.value})} />
                                                         </label>
                                                         <br/>
                                                         <label>
-                                                                Description:<br/>
-                                                                <textarea name="description" value={this.state.description} onChange={e => this.setState({description: e.target.value})} />
+                                                                <span>Description:</span><br/>
+                                                        <textarea name="description" maxLength="5000" value={this.state.description} onChange={e => this.setState({description: e.target.value})} />
                                                         </label>
                                                         <br/>
+                                                        <label>
+                                                                <span>Playlist privacy:</span><br/>
+                                                                <div className="select">
+                                                                <span className="arrow"><FontAwesomeIcon icon={faCaretDown} /></span>
+                                                                        <select value={this.state.privacy} onChange={e => this.setState({privacy: e.target.value})}>
+                                                                                <option value="public">Public</option>
+                                                                                <option value="unlisted">Unlisted</option>
+                                                                                <option value="private">Private</option>
+                                                                        </select>
+                                                                </div>
+                                                        </label>
                                                         <input name="submit" type="submit" value="Create" />
                                                 </form>
 
