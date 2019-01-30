@@ -3,6 +3,7 @@ import './App.css';
 import './bootstrap-grid.css';
 import queryString from 'query-string';
 import FlipMove from 'react-flip-move';
+import Switch from "react-switch";
 import { faRandom, faTrash, faExchangeAlt, faSyncAlt, faCheck, faTasks, faEdit, faTimes, faExclamationTriangle, faCaretDown, faSlidersH   } from "@fortawesome/free-solid-svg-icons";
 import { faYoutube } from "@fortawesome/free-brands-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -331,7 +332,7 @@ class TrackList extends Component {
                                         </div>
                                         : " "}
                                 </div>
-                                {this.state.showSettings ? <Settings closeSettings={this.toggleSettings} /> : null}
+                                {this.state.showSettings ? <Settings closeSettings={this.toggleSettings} list={this.state.list} /> : null}
                         </div>
                 )
         }
@@ -454,9 +455,15 @@ class Settings extends Component {
                 this.handleCheck = this.handleCheck.bind(this)
         }
 
-        handleCheck(e) {
-                localStorage.retainList = JSON.stringify(e.target.checked)
+        handleCheck(checked) {
+                localStorage.retainList = JSON.stringify(checked)
                 this.forceUpdate()
+                if (checked) {
+                        localStorage.list_backup = JSON.stringify(this.props.list)
+                }
+                else if (!checked) {
+                        localStorage.removeItem("list_backup")
+                }
         }
 
         render() {
@@ -471,10 +478,20 @@ class Settings extends Component {
                                                 <div className="row">
                                                         <div className="col">
                                                                 <span className="field-name">Remember last playlist</span>
-                                                                <div className="checkbox">
-                                                                        <input type="checkbox" onChange={this.handleCheck} checked={JSON.parse(localStorage.retainList)} />
-                                                                        <p>Retain my playlist when app is closed.</p>
-                                                                </div>
+                                                                        <label htmlFor="remember-playlist-switch" className="checkbox">
+                                                                                <span>Store your playlist when the app is closed.</span>
+                                                                                <Switch
+                                                                                        onChange={this.handleCheck}
+                                                                                        checked={JSON.parse(localStorage.retainList)}
+                                                                                        onColor="#30afd6"
+                                                                                        handleDiameter={25}
+                                                                                        uncheckedIcon={false}
+                                                                                        checkedIcon={false}
+                                                                                        activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
+                                                                                        height={25}
+                                                                                        width={45}
+                                                                                        id="remember-playlist-switch" />
+                                                                      </label>
                                                         </div>
                                                 </div>
                                         </div>

@@ -452,6 +452,7 @@ h5 {
 
 .checkbox {
         display: flex;
+        justify-content: space-between;
         align-items: center;
         color: #84858b;
 }
