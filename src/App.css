@@ -207,12 +207,15 @@ h5 {
 }
 .toolbar-buttons {
         display: flex;
-        justify-content: flex-end;
+        justify-content: space-between;
 }
-.toolbar:empty {
-        display: none;
+.toolbar-left {
+        display: flex;
 }
-.tool {
+.toolbar-right {
+        display: flex;
+}
+.toolbar-buttons button {
         margin: 4px;
 }
 .progress-bar-container {
@@ -284,7 +287,6 @@ h5 {
 }
 .popup_header h3 {
         margin: 0;
-        font-size: 12pt;
 }
 .close {
         height: 40px;
@@ -443,6 +445,21 @@ h5 {
         font-size: 1.5em;
 }
 
+.field-name {
+        font-weight: bold;
+        font-size: 13pt;
+}
+
+.checkbox {
+        display: flex;
+        align-items: center;
+        color: #84858b;
+}
+
+.checkbox input {
+        margin-right: 10px;
+}
+
 
 /* Extra small devices (phones, 0px and up) */
 @media only screen and (min-width: 0px) {
@@ -557,6 +574,9 @@ h5 {
                 background-color: #3dbb60;
                 border-color: #277c3e;
         }
+        .popup_header h3 {
+                font-size: 14pt;
+        }
 }
 
 /* Small devices (portrait tablets and large phones, 600px and up) */
@@ -601,9 +621,6 @@ h5 {
         .btn-1:hover svg {
                 margin-top: -30px;
         }
-        .popup_header h3 {
-                font-size: 14pt;
-        }
 }
 
 /* Medium devices (landscape tablets, 768px and up) */
@@ -619,6 +636,9 @@ h5 {
         }
         #logo h1 {
                 font-size: 18pt;
+        }
+        .popup_header h3 {
+                font-size: 16pt;
         }
 }
 

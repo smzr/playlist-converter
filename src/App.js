@@ -3,7 +3,7 @@ import './App.css';
 import './bootstrap-grid.css';
 import queryString from 'query-string';
 import FlipMove from 'react-flip-move';
-import { faRandom, faTrash, faExchangeAlt, faSyncAlt, faCheck, faTasks, faEdit, faTimes, faExclamationTriangle, faCaretDown  } from "@fortawesome/free-solid-svg-icons";
+import { faRandom, faTrash, faExchangeAlt, faSyncAlt, faCheck, faTasks, faEdit, faTimes, faExclamationTriangle, faCaretDown, faSlidersH   } from "@fortawesome/free-solid-svg-icons";
 import { faYoutube } from "@fortawesome/free-brands-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
@@ -69,7 +69,7 @@ class App extends Component {
                                 <div>
                                         <button onClick={() => window.open('https://www.youtube.com/playlist?list='+this.state.playlistId)} className="btn-1 btn-yt"><FontAwesomeIcon icon={faYoutube} size="lg" /><span className="btn-text">Open YouTube Playlist</span></button>
                                 </div>
-                                {this.state.showPopup ? <Popup text='Close Me' closePopup={this.togglePopup} onPlaylistIdChange={this.handlePlaylistIdChange}/> : null}
+                                {this.state.showPopup ? <Popup closePopup={this.togglePopup} onPlaylistIdChange={this.handlePlaylistIdChange}/> : null}
                         </div>
                 );
         }
@@ -81,14 +81,29 @@ class TrackList extends Component {
                 this.state = {
                         userInput: '',
                         inputURI:'',
-                        list: []
+                        list: [],
+                        showSettings: false
                 };
 
                 this.handlePlaylistIdChange = this.handlePlaylistIdChange.bind(this)
+                this.toggleSettings = this.toggleSettings.bind(this)
+        }
+
+        componentDidMount() {
+                if (JSON.parse(localStorage.retainList) && localStorage.list_backup) {
+                        this.setState({list: JSON.parse(localStorage.list_backup)})
+                }
+                else if (!JSON.parse(localStorage.retainList)) {
+                        localStorage.removeItem("list_backup")
+                }
         }
 
         handlePlaylistIdChange(playlistId) {
           this.props.onPlaylistIdChange(playlistId);
+        }
+
+        toggleSettings() {
+                this.setState({showSettings: !this.state.showSettings})
         }
 
         addToList(spotdata) {
@@ -120,6 +135,9 @@ class TrackList extends Component {
                         }
                 }
                 this.setState({list: listBuffer})
+                if (JSON.parse(localStorage.retainList)) {
+                        localStorage.list_backup = JSON.stringify(listBuffer)
+                }
         }
         addItem(text) {
                 const element = {
@@ -151,12 +169,18 @@ class TrackList extends Component {
                         listBuffer.push(emt)
                 }
                 this.setState({list: listBuffer, userInput: ''})
+                if (JSON.parse(localStorage.retainList)) {
+                        localStorage.list_backup = JSON.stringify(listBuffer)
+                }
         }
         removeItem(key) {
                 var filteredList = this.state.list.filter(function(item){
                         return (item.key !== key)
                 })
                 this.setState({list: filteredList})
+                if (JSON.parse(localStorage.retainList)) {
+                        localStorage.list_backup = JSON.stringify(filteredList)
+                }
         }
         changeIcon(key, icon) {
                 let listBuffer = this.state.list
@@ -166,6 +190,9 @@ class TrackList extends Component {
                         }
                 }
                 this.setState({list: listBuffer})
+                if (JSON.parse(localStorage.retainList)) {
+                        localStorage.list_backup = JSON.stringify(listBuffer)
+                }
         }
         handleClick() {
                 let id = this.state.inputURI.split('playlist:')[1];
@@ -237,6 +264,7 @@ class TrackList extends Component {
         }
         clearList() {
                 this.setState({list: []})
+                localStorage.removeItem("list_backup")
                 this.props.onProgressChange(0)
         }
         shuffle() {
@@ -249,6 +277,9 @@ class TrackList extends Component {
                         listBuffer[j] = x;
                 }
                 this.setState({list: listBuffer})
+                if (JSON.parse(localStorage.retainList)) {
+                        localStorage.list_backup = JSON.stringify(listBuffer)
+                }
         }
 
 
@@ -256,12 +287,7 @@ class TrackList extends Component {
                 let shuffle = <button onClick={()=>this.shuffle()} className="btn-1 tool"><FontAwesomeIcon icon={faRandom} size="lg" /><span className="btn-text">Shuffle</span></button>;
                 let clearList = <button onClick={()=>this.clearList()} className="btn-1 tool"><FontAwesomeIcon icon={faTrash} size="lg"/><span className="btn-text">Clear List</span></button>;
                 let transfer = <button onClick={()=>this.insertPlaylistItems()} className="btn-1 tool"><FontAwesomeIcon icon={faExchangeAlt} size="lg"/><span className="btn-text">Transfer Songs</span></button>;
-                let buttons = [];
-                if (this.state.list.length === 0) {
-                        buttons = []
-                } else {
-                        buttons = [shuffle, clearList, transfer]
-                }
+                let settings = <button onClick={()=> this.toggleSettings()} className="btn-1 tool"><FontAwesomeIcon icon={faSlidersH} size="lg"/><span className="btn-text">Settings</span></button>;
                 return (
                         <div className="list-main">
                                 <div className="searchbar">
@@ -289,12 +315,20 @@ class TrackList extends Component {
                                         </FlipMove>
                                 </ul>
                                 <div className="toolbar">
-                                        <FlipMove className="toolbar-buttons" duration={250} easing="ease-out">
-                                                {buttons.map(btn =>
-                                                        <div>{btn}</div>
-                                                )}
-                                        </FlipMove>
+                                        {this.state.list.length ?
+                                        <div className="toolbar-buttons">
+                                                <div className="toolbar-left">
+                                                        <div>{settings}</div>
+                                                </div>
+                                                <div className="toolbar-right">
+                                                        <div>{shuffle}</div>
+                                                        <div>{clearList}</div>
+                                                        <div>{transfer}</div>
+                                                </div>
+                                        </div>
+                                        : " "}
                                 </div>
+                                {this.state.showSettings ? <Settings closeSettings={this.toggleSettings} /> : null}
                         </div>
                 )
         }
@@ -356,10 +390,6 @@ class Popup extends Component {
                 })
         }
 
-        error() {
-
-        }
-
         render() {
                 return (
                         <div className='popup'>
@@ -405,6 +435,45 @@ class Popup extends Component {
                                                         <input name="submit" type="submit" value="Create" />
                                                 </form>
 
+                                        </div>
+                                </div>
+                        </div>
+                );
+        }
+}
+
+class Settings extends Component {
+        constructor(props) {
+                super(props)
+                this.state = {
+                }
+
+                this.handleCheck = this.handleCheck.bind(this)
+        }
+
+        handleCheck(e) {
+                localStorage.retainList = JSON.stringify(e.target.checked)
+                this.forceUpdate()
+        }
+
+        render() {
+                return (
+                        <div className='popup'>
+                                <div className='popup_inner'>
+                                        <div className="popup_header">
+                                                <h3>Preferences</h3>
+                                                <button onClick={this.props.closeSettings} className="close"><FontAwesomeIcon icon={faTimes} size="lg" /></button>
+                                        </div>
+                                        <div className="popup_body">
+                                                <div className="row">
+                                                        <div className="col">
+                                                                <span className="field-name">Remember last playlist</span>
+                                                                <div className="checkbox">
+                                                                        <input type="checkbox" onChange={this.handleCheck} checked={JSON.parse(localStorage.retainList)} />
+                                                                        <p>Retain my playlist when app is closed.</p>
+                                                                </div>
+                                                        </div>
+                                                </div>
                                         </div>
                                 </div>
                         </div>
