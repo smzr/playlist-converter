@@ -90,6 +90,9 @@ class TrackList extends Component {
         }
 
         componentDidMount() {
+                if (!localStorage.retainList) {
+                        localStorage.retainList = false
+                }
                 if (JSON.parse(localStorage.retainList) && localStorage.list_backup) {
                         this.setState({list: JSON.parse(localStorage.list_backup)})
                 }
