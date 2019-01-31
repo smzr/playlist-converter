@@ -342,6 +342,37 @@ class Popup extends Component {
         constructor(props) {
                 super(props)
                 this.state = {
+                        header: 'Change Destination Playlist',
+                        body: 'default'
+                }
+        }
+
+        render() {
+                return (
+                        <div className="popup">
+                                <div className="popup_inner">
+                                        <div className="popup_header">
+                                                <h3>{this.state.header}</h3>
+                                                <button onClick={this.props.closePopup} className="close"><FontAwesomeIcon icon={faTimes} size="lg" /></button>
+                                        </div>
+                                        { (this.state.body === 'default') ? <div className="popup_body popup_default">
+                                                <button onClick={() => this.setState({body: 'existingPlaylist', header: 'Use Existing YouTube Playlist'})} className="btn-1 btn-popup"><span>Existing YouTube Playlist</span></button>
+                                                <p className="hr-text"><span>OR</span></p>
+                                                <button onClick={() => this.setState({body: 'createPlaylist', header: 'Create New YouTube Playlist'})} className="btn-1 btn-popup"><span>Create New YouTube Playlist</span></button>
+                                        </div>
+                                        : null}
+                                        { (this.state.body === 'existingPlaylist') ? <PopupExistingPlaylist onPlaylistIdChange={this.props.onPlaylistIdChange.bind(this)} closePopup={this.props.closePopup.bind(this)}/> : null}
+                                        { (this.state.body === 'createPlaylist') ? <PopupCreatePlaylist onPlaylistIdChange={this.props.onPlaylistIdChange.bind(this)} closePopup={this.props.closePopup.bind(this)}/> : null}
+                                </div>
+                        </div>
+                );
+        }
+}
+
+class PopupCreatePlaylist extends Component {
+        constructor(props) {
+                super(props)
+                this.state = {
                         title: '',
                         description: '',
                         privacy: 'private',
@@ -394,55 +425,57 @@ class Popup extends Component {
                 })
         }
 
+
         render() {
                 return (
-                        <div className='popup'>
-                                <div className='popup_inner'>
-                                        <div className="popup_header">
-                                                <h3>Create new YouTube Playlist</h3>
-                                                <button onClick={this.props.closePopup} className="close"><FontAwesomeIcon icon={faTimes} size="lg" /></button>
+                        <div className="popup_body">
+                                {this.state.error.show ?
+                                        <div className="error">
+                                                <div className="error-header">
+                                                        <h4><FontAwesomeIcon icon={faExclamationTriangle} />Error!</h4>
+                                                        <button onClick={() => this.setState({error : {show: false}})} id="error-close" className="close"><FontAwesomeIcon icon={faTimes} /></button>
+                                                </div>
+                                                <div className="error-body">
+                                                        <b>{this.state.error.code}</b> {this.state.error.msg}
+                                                </div>
                                         </div>
-                                        <div className="popup_body">
-                                                {this.state.error.show ?
-                                                        <div className="error">
-                                                                <div className="error-header">
-                                                                        <h4><FontAwesomeIcon icon={faExclamationTriangle} />Error!</h4>
-                                                                        <button onClick={() => this.setState({error : {show: false}})} id="error-close" className="close"><FontAwesomeIcon icon={faTimes} /></button>
-                                                                </div>
-                                                                <div className="error-body">
-                                                                        <b>{this.state.error.code}</b> {this.state.error.msg}
-                                                                </div>
-                                                        </div>
-                                                : null}
-                                                <form onSubmit={this.handleSubmit}>
-                                                        <label>
-                                                                <span>Title:</span><br/>
-                                                        <textarea name="title" required maxLength="150" value={this.state.title} onChange={e => this.setState({title: e.target.value})} />
-                                                        </label>
-                                                        <br/>
-                                                        <label>
-                                                                <span>Description:</span><br/>
-                                                        <textarea name="description" maxLength="5000" value={this.state.description} onChange={e => this.setState({description: e.target.value})} />
-                                                        </label>
-                                                        <br/>
-                                                        <label>
-                                                                <span>Playlist privacy:</span><br/>
-                                                                <div className="select">
-                                                                <span className="arrow"><FontAwesomeIcon icon={faCaretDown} /></span>
-                                                                        <select value={this.state.privacy} onChange={e => this.setState({privacy: e.target.value})}>
-                                                                                <option value="public">Public</option>
-                                                                                <option value="unlisted">Unlisted</option>
-                                                                                <option value="private">Private</option>
-                                                                        </select>
-                                                                </div>
-                                                        </label>
-                                                        <input name="submit" type="submit" value="Create" />
-                                                </form>
-
-                                        </div>
-                                </div>
+                                : null}
+                                <form onSubmit={this.handleSubmit}>
+                                        <label>
+                                                <span>Title:</span><br/>
+                                        <textarea name="title" required maxLength="150" value={this.state.title} onChange={e => this.setState({title: e.target.value})} />
+                                        </label>
+                                        <br/>
+                                        <label>
+                                                <span>Description:</span><br/>
+                                        <textarea name="description" maxLength="5000" value={this.state.description} onChange={e => this.setState({description: e.target.value})} />
+                                        </label>
+                                        <br/>
+                                        <label>
+                                                <span>Playlist privacy:</span><br/>
+                                                <div className="select">
+                                                <span className="arrow"><FontAwesomeIcon icon={faCaretDown} /></span>
+                                                        <select value={this.state.privacy} onChange={e => this.setState({privacy: e.target.value})}>
+                                                                <option value="public">Public</option>
+                                                                <option value="unlisted">Unlisted</option>
+                                                                <option value="private">Private</option>
+                                                        </select>
+                                                </div>
+                                        </label>
+                                        <input name="submit" type="submit" value="Create" />
+                                </form>
                         </div>
                 );
+        }
+}
+
+class PopupExistingPlaylist extends Component {
+        render () {
+                return(
+                        <div>
+                                <span>Coming sooooooon</span>
+                        </div>
+                )
         }
 }
 
