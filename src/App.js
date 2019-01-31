@@ -43,6 +43,9 @@ class App extends Component {
         if (parsed.youtube_access_token !== undefined) {
             localStorage.youtube_access_token = parsed.youtube_access_token
         }
+        if (parsed.youtube_id !== undefined) {
+            localStorage.youtube_id = parsed.youtube_id
+        }
         this.setState({playlistId: localStorage.playlist_id})
     }
 
@@ -523,45 +526,53 @@ class PopupExistingPlaylist extends Component {
         this.state = {
             playlists: []
         };
-        this.getUsersPlaylists = this.getUsersPlaylists.bind(this)
+        this.getUsersPlaylists = this.getUsersPlaylists.bind(this);
+        this.changePlaylist = this.changePlaylist.bind(this);
     }
 
     componentDidMount() {
         this.getUsersPlaylists();
-        console.log('heki')
     }
 
     getUsersPlaylists() {
-        let yt = localStorage.youtube_access_token;
-        console.log('hekiheki');
-        fetch('https://www.googleapis.com/youtube/v3/playlists?part=snippet,contentDetails&maxResults=25&mine=true', {
+        fetch('https://www.googleapis.com/youtube/v3/playlists?part=snippet,contentDetails&maxResults=25&channelId=' + localStorage.youtube_id +'&key=' + process.env.API_KEY, {
             method: 'GET',
             headers: {
                 'Content-type': 'application/json',
-                'Authorization': 'Bearer ' + yt
-            },
-            body: JSON.stringify({
-                'snippet':
-                    {}
-            })
+                'Accept': 'application/json'
+            }
         }).then(response => response.json()).then(data => {
-            console.log('hekihekiheki');
-            console.log(data)
+            console.log(data);
+            let playlists = [];
+            const element = {
+                id: '',
+                title: ''
+            };
+            for (let i = 0; i < data.items.length; i++) {
+                let emt = Object.create(element);
+                emt.id = data.items[i].id;
+                emt.title = data.items[i].snippet.title;
+                playlists.push(emt)
+            }
+            this.setState({playlists: playlists});
         })
+    }
+
+    changePlaylist(id) {
+        this.props.onPlaylistIdChange(id);
+        this.props.closePopup();
     }
 
     render() {
         return (
             <div>
-                <button onClick={this.getUsersPlaylists}>asdaf</button>
-                <ul className="row">
+                <ul className="row playlists">
+                    <h4 style={{margin: '10px'}}>Select existing playlist:</h4>
                     <FlipMove className="flipmove" duration={250} easing="ease-out">
-                        {this.state.playlists.map(item =>
-                            <li onClick={() => this.removeItem(item.key)} key={item.key}>
+                        {this.state.playlists.map(pl =>
+                            <li onClick={() => this.changePlaylist(pl.id)} className="playlist" key={pl.id}>
                                 <div className="col-sm-2 col-xs-3"><FontAwesomeIcon icon={faBars}/></div>
-                                <div className="col-sm-8 col-xs-6"><p className="trackname">{item.name}</p><p
-                                    className="artist">{item.artist}</p></div>
-                                <div className="col-sm-2 col-xs-3"></div>
+                                <div className="col-sm-8 col-xs-6"><p>{pl.title}</p></div>
                             </li>
                         )}
                     </FlipMove>
