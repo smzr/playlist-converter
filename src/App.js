@@ -535,7 +535,7 @@ class PopupExistingPlaylist extends Component {
     }
 
     getUsersPlaylists() {
-        fetch('https://www.googleapis.com/youtube/v3/playlists?part=snippet,contentDetails&maxResults=25&channelId=' + localStorage.youtube_id +'&key=' + process.env.API_KEY, {
+        fetch('https://www.googleapis.com/youtube/v3/playlists?part=snippet,contentDetails&maxResults=25&channelId=' + localStorage.youtube_id +'&key=' + process.env.REACT_APP_API_KEY, {
             method: 'GET',
             headers: {
                 'Content-type': 'application/json',
